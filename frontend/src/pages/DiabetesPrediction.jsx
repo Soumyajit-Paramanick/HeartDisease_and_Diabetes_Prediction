@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
+import config from "../config";
 
 export default function DiabetesPrediction() {
   const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ export default function DiabetesPrediction() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/diabetes-prediction",
+        `${config.API_BASE_URL}/api/diabetes-prediction`,
         formData
       );
 
