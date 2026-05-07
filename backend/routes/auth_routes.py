@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
-from utils.db import get_connection
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from utils.db import db, User
 
 auth_bp = Blueprint("auth_bp", __name__)
 
@@ -8,7 +9,9 @@ auth_bp = Blueprint("auth_bp", __name__)
 # REGISTER
 @auth_bp.route("/api/register", methods=["POST"])
 def register():
+
     try:
+
         data = request.json
 
         name = data.get("name")
@@ -16,30 +19,42 @@ def register():
         password = data.get("password")
 
         if not name or not email or not password:
+
             return jsonify({
                 "error": "All fields are required"
             }), 400
 
+        # Check if user already exists
+        existing_user = User.query.filter_by(email=email).first()
+
+        if existing_user:
+
+            return jsonify({
+                "error": "Email already registered"
+            }), 400
+
+        # Hash password
         hashed_password = generate_password_hash(password)
 
-        conn = get_connection()
-        cursor = conn.cursor()
+        # Create new user
+        new_user = User(
+            name=name,
+            email=email,
+            password=hashed_password
+        )
 
-        cursor.execute("""
-            INSERT INTO users (name, email, password)
-            VALUES (?, ?, ?)
-        """, (name, email, hashed_password))
-
-        conn.commit()
-        conn.close()
+        # Save to database
+        db.session.add(new_user)
+        db.session.commit()
 
         print(f"NEW USER REGISTERED → {email}")
 
         return jsonify({
             "message": "Registration successful"
-        })
+        }), 201
 
     except Exception as e:
+
         return jsonify({
             "error": str(e)
         }), 500
@@ -48,48 +63,42 @@ def register():
 # LOGIN
 @auth_bp.route("/api/login", methods=["POST"])
 def login():
+
     try:
+
         data = request.json
 
         email = data.get("email")
         password = data.get("password")
 
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            SELECT * FROM users
-            WHERE email = ?
-        """, (email,))
-
-        user = cursor.fetchone()
-        conn.close()
+        # Find user
+        user = User.query.filter_by(email=email).first()
 
         if not user:
+
             return jsonify({
                 "error": "User not found"
             }), 404
 
-        if not check_password_hash(
-            user["password"],
-            password
-        ):
+        # Check password
+        if not check_password_hash(user.password, password):
+
             return jsonify({
                 "error": "Invalid password"
             }), 401
 
-        # PRINT WHO LOGGED IN
-        print(f"USER LOGGED IN → {user['name']} ({user['email']})")
+        print(f"USER LOGGED IN → {user.name} ({user.email})")
 
         return jsonify({
             "message": "Login successful",
             "user": {
-                "name": user["name"],
-                "email": user["email"]
+                "name": user.name,
+                "email": user.email
             }
-        })
+        }), 200
 
     except Exception as e:
+
         return jsonify({
             "error": str(e)
         }), 500

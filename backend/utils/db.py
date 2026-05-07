@@ -1,31 +1,24 @@
-import sqlite3
-import os
+from flask_sqlalchemy import SQLAlchemy
 
-DB_PATH = "database/users.db"
-
-
-def get_connection():
-    os.makedirs("database", exist_ok=True)
-
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+db = SQLAlchemy()
 
 
-def create_users_table():
-    conn = get_connection()
-    cursor = conn.cursor()
+class User(db.Model):
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
+    __tablename__ = "users"
 
-    conn.commit()
-    conn.close()
+    id = db.Column(db.Integer, primary_key=True)
 
-    print("Users table ready")
+    name = db.Column(db.String(100), nullable=False)
+
+    email = db.Column(db.String(100), unique=True, nullable=False)
+
+    password = db.Column(db.String(255), nullable=False)
+
+    def to_dict(self):
+
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email
+        }

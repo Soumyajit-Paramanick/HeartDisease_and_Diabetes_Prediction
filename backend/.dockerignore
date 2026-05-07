@@ -4,3 +4,4 @@ venv/
 .git/
 models/
 database/
+.env

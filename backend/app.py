@@ -1,8 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
 
+from config import Config
+
 from utils.download_models import download_models
-from utils.db import create_users_table
+from utils.db import db
 
 # Download models before importing routes
 download_models()
@@ -12,12 +14,19 @@ from routes.diabetes_routes import diabetes_bp
 from routes.auth_routes import auth_bp
 
 app = Flask(__name__)
+
+app.config.from_object(Config)
+
 CORS(app)
 
-# Create users table automatically
-create_users_table()
+# Initialize database
+db.init_app(app)
 
-# Register all routes
+# Create tables automatically
+with app.app_context():
+    db.create_all()
+
+# Register routes
 app.register_blueprint(heart_bp)
 app.register_blueprint(diabetes_bp)
 app.register_blueprint(auth_bp)
