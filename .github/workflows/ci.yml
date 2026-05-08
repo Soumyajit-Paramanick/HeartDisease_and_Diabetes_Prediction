@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  docker-build:
+  docker-build-push:
 
     runs-on: ubuntu-latest
 
@@ -19,11 +19,23 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Frontend Docker Image
-        run: docker build ./frontend -t frontend-image
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Backend Docker Image
-        run: docker build ./backend -t backend-image
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-heartdisease-and-diabetes-prediction:latest ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/frontend-heartdisease-and-diabetes-prediction:latest
 
-      - name: Build Nginx Docker Image
-        run: docker build ./nginx -t nginx-image
+      - name: Build and Push Backend Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-heartdisease-and-diabetes-prediction:latest ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/backend-heartdisease-and-diabetes-prediction:latest
+
+      - name: Build and Push Nginx Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/nginx-heartdisease-and-diabetes-prediction:latest ./nginx
+          docker push ${{ secrets.DOCKER_USERNAME }}/nginx-heartdisease-and-diabetes-prediction:latest
