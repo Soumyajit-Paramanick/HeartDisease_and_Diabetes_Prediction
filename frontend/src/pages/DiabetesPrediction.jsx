@@ -53,7 +53,7 @@ export default function DiabetesPrediction() {
 
     try {
       const res = await axios.post(
-        `${config.API_BASE_URL}/api/diabetes-prediction`,
+        `${config.API_BASE_URL}/diabetes-prediction`,
         formData
       );
 

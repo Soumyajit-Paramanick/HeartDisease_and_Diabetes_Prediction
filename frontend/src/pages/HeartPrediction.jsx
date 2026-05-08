@@ -87,7 +87,7 @@ export default function HeartPrediction() {
 
     try {
       const res = await axios.post(
-        `${config.API_BASE_URL}/api/heart-prediction`,
+        `${config.API_BASE_URL}/heart-prediction`,
         formData
       );
 

@@ -9,8 +9,11 @@ def download_models():
     heart_model_path = "models/best_heart_model.pkl"
     diabetes_model_path = "models/best_diabetes_model.pkl"
 
-    # Heart Model (small file)
-    if not os.path.exists(heart_model_path):
+    # Heart Model
+    if os.path.exists(heart_model_path):
+        print("Heart model already exists.")
+
+    else:
         print("Downloading heart model...")
 
         gdown.download(
@@ -19,8 +22,11 @@ def download_models():
             quiet=False
         )
 
-    # Diabetes Model (large file)
-    if not os.path.exists(diabetes_model_path):
+    # Diabetes Model
+    if os.path.exists(diabetes_model_path):
+        print("Diabetes model already exists.")
+
+    else:
         print("Downloading diabetes model...")
 
         gdown.download(

@@ -32,8 +32,8 @@ export default function AuthPage() {
 
     try {
       const url = isLogin
-        ? `${config.API_BASE_URL}/api/login`
-        : `${config.API_BASE_URL}/api/register`;
+        ? `${config.API_BASE_URL}/login`
+        : `${config.API_BASE_URL}/register`;
 
       const payload = isLogin
         ? {
