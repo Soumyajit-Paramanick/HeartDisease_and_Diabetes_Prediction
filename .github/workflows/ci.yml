@@ -13,7 +13,7 @@ jobs:
 
     steps:
 
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
@@ -25,17 +25,50 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Frontend Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend-heartdisease-and-diabetes-prediction:latest ./frontend
-          docker push ${{ secrets.DOCKER_USERNAME }}/frontend-heartdisease-and-diabetes-prediction:latest
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: soumyajitparamanick96419/frontend-heartdisease-and-diabetes-prediction:latest
 
-      - name: Build and Push Backend Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend-heartdisease-and-diabetes-prediction:latest ./backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/backend-heartdisease-and-diabetes-prediction:latest
+      - name: Build and Push Backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: soumyajitparamanick96419/backend-heartdisease-and-diabetes-prediction:latest
 
-      - name: Build and Push Nginx Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/nginx-heartdisease-and-diabetes-prediction:latest ./nginx
-          docker push ${{ secrets.DOCKER_USERNAME }}/nginx-heartdisease-and-diabetes-prediction:latest
+      - name: Build and Push Nginx
+        uses: docker/build-push-action@v6
+        with:
+          context: ./nginx
+          push: true
+          tags: soumyajitparamanick96419/nginx-heartdisease-and-diabetes-prediction:latest
+
+  deploy:
+
+    needs: docker-build-push
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+
+          script: |
+
+            cd ~/HeartDisease_and_Diabetes_Prediction
+
+            docker compose pull
+
+            docker compose down
+
+            docker compose up -d
+
+            docker image prune -f
