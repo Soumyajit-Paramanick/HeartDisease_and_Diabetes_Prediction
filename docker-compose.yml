@@ -1,14 +1,16 @@
 services:
 
   frontend:
-    build: ./frontend
+
+    image: soumyajitparamanick96419/frontend-heartdisease-and-diabetes-prediction:latest
 
     container_name: frontend_container
 
     restart: always
 
   backend:
-    build: ./backend
+
+    image: soumyajitparamanick96419/backend-heartdisease-and-diabetes-prediction:latest
 
     container_name: backend_container
 
@@ -24,6 +26,7 @@ services:
       - model_data:/app/models
 
   mysql:
+
     image: mysql:8
 
     container_name: mysql_container
@@ -38,7 +41,8 @@ services:
       - mysql_data:/var/lib/mysql
 
   nginx:
-    build: ./nginx
+
+    image: soumyajitparamanick96419/nginx-heartdisease-and-diabetes-prediction:latest
 
     container_name: nginx_container
 
