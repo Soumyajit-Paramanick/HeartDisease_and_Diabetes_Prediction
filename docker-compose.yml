@@ -5,10 +5,14 @@ services:
 
     container_name: frontend_container
 
+    restart: always
+
   backend:
     build: ./backend
 
     container_name: backend_container
+
+    restart: always
 
     env_file:
       - ./backend/.env
@@ -37,6 +41,8 @@ services:
     build: ./nginx
 
     container_name: nginx_container
+
+    restart: always
 
     ports:
       - "80:80"
