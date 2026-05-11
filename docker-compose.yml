@@ -79,6 +79,14 @@ services:
 
     depends_on:
       - prometheus
+  node_exporter:
+
+    image: prom/node-exporter
+
+    container_name: node_exporter_container
+
+    ports:
+      - "9100:9100"
 
 volumes:
   mysql_data:
