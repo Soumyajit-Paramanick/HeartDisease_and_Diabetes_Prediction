@@ -65,6 +65,8 @@ jobs:
 
             cd ~/HeartDisease_and_Diabetes_Prediction
 
+            git pull origin main
+
             docker compose pull
 
             docker compose down
