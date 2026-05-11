@@ -2,7 +2,7 @@ services:
 
   frontend:
 
-    image: soumyajitparamanick96419/frontend-heartdisease-and-diabetes-prediction:latest
+    image: 920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction:latest
 
     container_name: frontend_container
 
@@ -12,7 +12,7 @@ services:
 
   backend:
 
-    image: soumyajitparamanick96419/backend-heartdisease-and-diabetes-prediction:latest
+    image: 920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction:latest
 
     container_name: backend_container
 
@@ -54,7 +54,7 @@ services:
 
   nginx:
 
-    image: soumyajitparamanick96419/nginx-heartdisease-and-diabetes-prediction:latest
+    image: 920687103858.dkr.ecr.us-east-1.amazonaws.com/nginx-heartdisease-and-diabetes-prediction:latest
 
     container_name: nginx_container
 
