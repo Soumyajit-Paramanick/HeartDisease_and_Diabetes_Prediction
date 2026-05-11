@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
 
+from prometheus_flask_exporter import PrometheusMetrics
+
 from config import Config
 
 from utils.db import db
@@ -15,6 +17,9 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 CORS(app)
+
+# Prometheus Metrics
+metrics = PrometheusMetrics(app)
 
 # Initialize database
 db.init_app(app)
