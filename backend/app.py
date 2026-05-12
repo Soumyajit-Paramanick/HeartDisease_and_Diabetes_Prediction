@@ -26,7 +26,10 @@ db.init_app(app)
 
 # Create tables automatically
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"Database initialization warning: {e}")
 
 # Register routes
 app.register_blueprint(heart_bp)
