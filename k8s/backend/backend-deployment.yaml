@@ -32,6 +32,15 @@ spec:
         ports:
         - containerPort: 5000
 
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+
         env:
 
         - name: MYSQL_HOST
