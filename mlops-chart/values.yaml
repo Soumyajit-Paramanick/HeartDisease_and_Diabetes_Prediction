@@ -6,11 +6,29 @@ backend:
   replicas: 1
   containerPort: 5000
 
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
 frontend:
   name: frontend
   image: frontend-local:latest
   replicas: 1
   containerPort: 80
+
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+
+    limits:
+      cpu: "100m"
+      memory: "128Mi"
 
 mysql:
   name: mysql
@@ -18,6 +36,15 @@ mysql:
   replicas: 1
   containerPort: 3306
   storage: 1Gi
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
 
 secret:
   mysqlRootPassword: password
