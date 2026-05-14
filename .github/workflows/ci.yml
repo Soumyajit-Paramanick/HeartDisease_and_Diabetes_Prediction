@@ -33,7 +33,7 @@ jobs:
     - name: Download ML Models
       working-directory: ./backend
       run: |
-        python utils/download_models.py
+        python -c "from utils.download_models import download_models; download_models()"
 
     - name: Backend Import Test
       working-directory: ./backend
