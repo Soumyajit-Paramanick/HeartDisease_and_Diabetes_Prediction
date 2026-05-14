@@ -29,6 +29,11 @@ jobs:
       working-directory: ./backend
       run: |
         pip install -r requirements.txt
+        
+    - name: Download ML Models
+      working-directory: ./backend
+      run: |
+        python utils/download_models.py
 
     - name: Backend Import Test
       working-directory: ./backend
