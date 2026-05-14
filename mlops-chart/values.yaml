@@ -1,0 +1,34 @@
+namespace: mlops
+
+backend:
+  name: backend
+  image: backend-local:latest
+  replicas: 1
+  containerPort: 5000
+
+frontend:
+  name: frontend
+  image: frontend-local:latest
+  replicas: 1
+  containerPort: 80
+
+mysql:
+  name: mysql
+  image: mysql:8
+  replicas: 1
+  containerPort: 3306
+  storage: 1Gi
+
+secret:
+  mysqlRootPassword: password
+  mysqlUser: root
+  mysqlPassword: password
+  mysqlDatabase: healthdb
+
+ingress:
+  host: mlops.local
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  cpuUtilization: 50

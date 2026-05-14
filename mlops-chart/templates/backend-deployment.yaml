@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: {{ .Values.backend.name }}
+  namespace: {{ .Values.namespace }}
+
+spec:
+  replicas: {{ .Values.backend.replicas }}
+
+  selector:
+    matchLabels:
+      app: {{ .Values.backend.name }}
+
+  template:
+
+    metadata:
+      labels:
+        app: {{ .Values.backend.name }}
+
+    spec:
+
+      containers:
+
+      - name: {{ .Values.backend.name }}
+
+        image: {{ .Values.backend.image }}
+
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: {{ .Values.backend.containerPort }}
+
+        env:
+
+        - name: MYSQL_HOST
+          value: mysql
+
+        - name: MYSQL_PORT
+          value: "3306"
+
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_USER
+
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_PASSWORD
+
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_DATABASE
