@@ -6,12 +6,17 @@ metadata:
   name: backend
   namespace: {{ .Values.namespace }}
 
+  labels:
+    app: backend
+
 spec:
+
   selector:
     app: {{ .Values.backend.name }}
 
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 5000
       targetPort: 5000
 
