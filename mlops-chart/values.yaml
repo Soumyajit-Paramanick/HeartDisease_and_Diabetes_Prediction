@@ -5,7 +5,7 @@ backend:
 
   image:
     repository: 920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction
-    tag: latest
+    tag: initial
 
   replicas: 1
   containerPort: 5000
@@ -24,7 +24,7 @@ frontend:
 
   image:
     repository: 920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction
-    tag: latest
+    tag: initial
 
   replicas: 1
   containerPort: 80
