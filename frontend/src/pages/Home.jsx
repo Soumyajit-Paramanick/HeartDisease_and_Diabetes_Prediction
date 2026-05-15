@@ -37,7 +37,7 @@ export default function Home() {
             <h1 className="text-5xl md:text-6xl font-extrabold leading-tight mb-6">
               Disease Prediction <br />
               <span className="text-cyan-400">
-                System
+                System GitOps Test
               </span>
             </h1>
 
