@@ -12,6 +12,9 @@ on:
     branches:
       - kubernetes-clean-setup
 
+permissions:
+  contents: write
+
 jobs:
 
   backend-checks:
@@ -63,7 +66,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -81,7 +85,9 @@ jobs:
           echo "image_tag=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
           echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
-      # BACKEND
+      # ======================
+      # BACKEND IMAGE
+      # ======================
 
       - name: Build Backend Docker Image
         run: |
@@ -101,7 +107,9 @@ jobs:
 
           docker push 920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction:latest
 
-      # FRONTEND
+      # ======================
+      # FRONTEND IMAGE
+      # ======================
 
       - name: Build Frontend Docker Image
         run: |
@@ -121,6 +129,10 @@ jobs:
 
           docker push 920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction:latest
 
+      # ======================
+      # UPDATE HELM VALUES
+      # ======================
+
       - name: Update Helm values with image SHA
         run: |
           sed -i "/backend:/,/replicas:/ s/tag: .*/tag: ${IMAGE_TAG}/" mlops-chart/values.yaml
@@ -128,14 +140,16 @@ jobs:
 
       - name: Commit Updated values.yaml
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add mlops-chart/values.yaml
 
-          git commit -m "Updated image tag to ${IMAGE_TAG}" || echo "No changes to commit"
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
 
-          git push origin kubernetes-clean-setup
+          git commit -m "Updated image tag to ${IMAGE_TAG}"
+
+          git push
 
   helm-validation:
 
