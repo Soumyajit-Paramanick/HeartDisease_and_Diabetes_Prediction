@@ -1,5 +1,4 @@
 apiVersion: apps/v1
-
 kind: Deployment
 
 metadata:
@@ -14,81 +13,80 @@ spec:
       app: {{ .Values.backend.name }}
 
   template:
-
     metadata:
       labels:
         app: {{ .Values.backend.name }}
 
     spec:
-
+      imagePullSecrets:
+        - name: ecr-secret
+        
       containers:
+        - name: {{ .Values.backend.name }}
 
-      - name: {{ .Values.backend.name }}
+          image: "{{ .Values.backend.image }}:{{ .Values.backend.tag }}"
 
-        image: {{ .Values.backend.image }}
+          imagePullPolicy: Always
 
-        imagePullPolicy: Never
+          ports:
+            - containerPort: {{ .Values.backend.containerPort }}
 
-        ports:
-        - containerPort: {{ .Values.backend.containerPort }}
+          env:
+            - name: MYSQL_HOST
+              value: mysql
 
-        env:
+            - name: MYSQL_PORT
+              value: "3306"
 
-        - name: MYSQL_HOST
-          value: mysql
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_USER
 
-        - name: MYSQL_PORT
-          value: "3306"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
 
-        - name: MYSQL_USER
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: MYSQL_USER
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_DATABASE
 
-        - name: MYSQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: MYSQL_PASSWORD
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
 
-        - name: MYSQL_DATABASE
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: MYSQL_DATABASE
+            failureThreshold: 30
+            periodSeconds: 10
 
-        startupProbe:
-          httpGet:
-            path: /api/health
-            port: 5000
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
 
-          failureThreshold: 30
-          periodSeconds: 10
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
 
-        readinessProbe:
-          httpGet:
-            path: /api/health
-            port: 5000
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
 
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 5
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
 
-        livenessProbe:
-          httpGet:
-            path: /api/health
-            port: 5000
+          resources:
+            requests:
+              cpu: {{ .Values.backend.resources.requests.cpu }}
+              memory: {{ .Values.backend.resources.requests.memory }}
 
-          initialDelaySeconds: 15
-          periodSeconds: 20
-          timeoutSeconds: 5
-
-        resources:
-          requests:
-            cpu: {{ .Values.backend.resources.requests.cpu }}
-            memory: {{ .Values.backend.resources.requests.memory }}
-
-          limits:
-            cpu: {{ .Values.backend.resources.limits.cpu }}
-            memory: {{ .Values.backend.resources.limits.memory }}
+            limits:
+              cpu: {{ .Values.backend.resources.limits.cpu }}
+              memory: {{ .Values.backend.resources.limits.memory }}
