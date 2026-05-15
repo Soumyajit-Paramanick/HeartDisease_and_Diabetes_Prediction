@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 
 spec:
+  revisionHistoryLimit: 2
   replicas: {{ .Values.frontend.replicas }}
 
   selector:
