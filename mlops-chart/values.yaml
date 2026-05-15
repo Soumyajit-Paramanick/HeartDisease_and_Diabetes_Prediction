@@ -2,8 +2,11 @@ namespace: mlops
 
 backend:
   name: backend
-  image: 920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction
-  tag: latest
+
+  image:
+    repository: 920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction
+    tag: latest
+
   replicas: 1
   containerPort: 5000
 
@@ -18,8 +21,11 @@ backend:
 
 frontend:
   name: frontend
-  image: 920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction
-  tag: latest
+
+  image:
+    repository: 920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction
+    tag: latest
+
   replicas: 1
   containerPort: 80
 
