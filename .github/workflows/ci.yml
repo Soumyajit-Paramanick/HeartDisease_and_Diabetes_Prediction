@@ -37,14 +37,12 @@ jobs:
 
     - name: Backend Import Test
       working-directory: ./backend
-
       env:
         MYSQL_HOST: localhost
         MYSQL_PORT: 3306
         MYSQL_USER: root
         MYSQL_PASSWORD: password
         MYSQL_DATABASE: healthdb
-
       run: |
         python -c "from app import app"
 
@@ -59,20 +57,62 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
     - name: Set Git Commit SHA
       run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+    # BACKEND
 
     - name: Build Backend Docker Image
       run: |
         docker build -t backend:${IMAGE_TAG} ./backend
 
+    - name: Tag Backend Image
+      run: |
+        docker tag backend:${IMAGE_TAG} \
+        920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction:${IMAGE_TAG}
+
+        docker tag backend:${IMAGE_TAG} \
+        920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction:latest
+
+    - name: Push Backend Image
+      run: |
+        docker push 920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction:${IMAGE_TAG}
+
+        docker push 920687103858.dkr.ecr.us-east-1.amazonaws.com/backend-heartdisease-and-diabetes-prediction:latest
+
+    # FRONTEND
+
     - name: Build Frontend Docker Image
       run: |
         docker build -t frontend:${IMAGE_TAG} ./frontend
 
-    - name: Verify Docker Images
+    - name: Tag Frontend Image
       run: |
-        docker images
+        docker tag frontend:${IMAGE_TAG} \
+        920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction:${IMAGE_TAG}
+
+        docker tag frontend:${IMAGE_TAG} \
+        920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction:latest
+
+    - name: Push Frontend Image
+      run: |
+        docker push 920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction:${IMAGE_TAG}
+
+        docker push 920687103858.dkr.ecr.us-east-1.amazonaws.com/frontend-heartdisease-and-diabetes-prediction:latest
+
+    - name: Verify Docker Images
+      run: docker images
 
   helm-validation:
 
