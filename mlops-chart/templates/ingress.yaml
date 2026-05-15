@@ -1,5 +1,4 @@
 apiVersion: networking.k8s.io/v1
-
 kind: Ingress
 
 metadata:
@@ -7,12 +6,10 @@ metadata:
   namespace: {{ .Values.namespace }}
 
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
 
   rules:
-    - host: {{ .Values.ingress.host }}
-
-      http:
+    - http:
         paths:
 
           - path: /api
